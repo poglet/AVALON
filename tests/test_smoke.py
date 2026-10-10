@@ -33,7 +33,8 @@ def test_cli_run_is_a_stub() -> None:
     assert "not yet implemented" in result.output
 
 
-def test_cli_doctor_is_a_stub() -> None:
+def test_cli_doctor_runs() -> None:
     result = runner.invoke(app, ["doctor"])
-    assert result.exit_code == 1
-    assert "not yet implemented" in result.output
+    # Exit 0 when all required tools are present, 1 when some are missing.
+    assert result.exit_code in (0, 1)
+    assert "host tool check" in result.output

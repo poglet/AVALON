@@ -11,8 +11,13 @@ from __future__ import annotations
 from typing import Annotated
 
 import typer
+from rich.console import Console
+from rich.table import Table
 
 from avalon import __version__
+from avalon.tools.detection import REQUIRED_TOOLS, detect, install_hint, missing
+
+console = Console()
 
 app = typer.Typer(
     name="avalon",
@@ -143,7 +148,26 @@ def export(
 @app.command()
 def doctor() -> None:
     """Check host tool availability and print install hints."""
-    _not_implemented("doctor", "Phase 2")
+    statuses = detect(REQUIRED_TOOLS)
+    table = Table(title="AVALON host tool check")
+    table.add_column("Tool")
+    table.add_column("Status")
+    table.add_column("Path / install hint")
+    for status in statuses:
+        if status.present:
+            table.add_row(status.name, "[green]ok[/green]", status.path or "")
+        else:
+            table.add_row(status.name, "[red]missing[/red]", install_hint(status.name))
+    console.print(table)
+
+    missing_tools = missing(REQUIRED_TOOLS)
+    if missing_tools:
+        console.print(
+            f"[red]Missing required tools: {', '.join(missing_tools)}. "
+            "Install them and re-run 'avalon doctor'.[/red]"
+        )
+        raise typer.Exit(code=1)
+    console.print("[green]All required tools are present.[/green]")
 
 
 if __name__ == "__main__":  # pragma: no cover
