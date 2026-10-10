@@ -8,6 +8,7 @@ later phases.
 
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 from typing import Annotated
 
@@ -94,7 +95,42 @@ def run(
     ] = False,
 ) -> None:
     """Run an autonomous engagement against an authorized target."""
-    _not_implemented("run", "Phase 6")
+    from avalon.engine.react import StepEvent
+    from avalon.engine.runner import run_engagement
+
+    if not target:
+        console.print("[red]At least one --target is required.[/red]")
+        raise typer.Exit(code=1)
+
+    def on_step(event: StepEvent) -> None:
+        if quiet:
+            return
+        state = "ok" if event.ok else "error"
+        console.print(f"[bold]#{event.idx}[/bold] [{event.phase}] {event.tool_name} ({state})")
+        if event.command:
+            console.print(f"  $ {event.command}")
+        if event.output:
+            console.print(f"  {event.output.strip()[:500]}")
+
+    def on_message(text: str) -> None:
+        console.print(f"\n[bold green]AVALON:[/bold green] {text}")
+
+    steps = None if unlimited else max_steps
+    result = asyncio.run(
+        run_engagement(
+            project,
+            target,
+            box_type=box_type,
+            model=model,
+            max_steps=steps,
+            max_time_minutes=max_time,
+            unattended=unattended,
+            reset_playbooks=reset_playbooks,
+            on_step=on_step,
+            on_message=on_message,
+        )
+    )
+    console.print(f"\n[bold]Run {result.run_id} finished: {result.status}[/bold]")
 
 
 @app.command()

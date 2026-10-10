@@ -27,10 +27,10 @@ def test_cli_exposes_documented_commands() -> None:
         assert command in result.stdout
 
 
-def test_cli_run_is_a_stub() -> None:
-    result = runner.invoke(app, ["run", "--project", "demo", "--target", "10.0.0.1"])
+def test_cli_run_requires_a_target() -> None:
+    result = runner.invoke(app, ["run", "--project", "demo"])
     assert result.exit_code == 1
-    assert "not yet implemented" in result.output
+    assert "target is required" in result.output
 
 
 def test_cli_doctor_runs() -> None:
