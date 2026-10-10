@@ -137,6 +137,10 @@ Everything else has sensible defaults. Advanced tuning lives in an optional
 
 ## Usage
 
+> **Note:** the commands below are the planned v0.1 surface. They are currently stubs that
+> report the phase in which they will be implemented, so `avalon run` will tell you it is not
+> ready yet rather than doing anything.
+
 ```sh
 # run an autonomous engagement against an authorized target
 avalon run --project my-ctf --target 10.10.10.5

@@ -1,4 +1,4 @@
-"""Phase 0 smoke tests: the package imports and the CLI is wired up."""
+"""Phase 0 smoke tests: the package imports and the CLI surface is wired up."""
 
 from __future__ import annotations
 
@@ -20,7 +20,20 @@ def test_cli_version_flag() -> None:
     assert __version__ in result.stdout
 
 
-def test_cli_doctor_placeholder() -> None:
-    result = runner.invoke(app, ["doctor"])
+def test_cli_exposes_documented_commands() -> None:
+    result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
-    assert "doctor" in result.stdout
+    for command in ("run", "resume", "runs", "show", "steer", "export", "doctor"):
+        assert command in result.stdout
+
+
+def test_cli_run_is_a_stub() -> None:
+    result = runner.invoke(app, ["run", "--project", "demo", "--target", "10.0.0.1"])
+    assert result.exit_code == 1
+    assert "not yet implemented" in result.output
+
+
+def test_cli_doctor_is_a_stub() -> None:
+    result = runner.invoke(app, ["doctor"])
+    assert result.exit_code == 1
+    assert "not yet implemented" in result.output
