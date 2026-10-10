@@ -23,6 +23,7 @@ scopeweaver-main/
 
 # Internal planning documents — not part of the distributed project.
 plans/
+idea.md
 
 # Editors / OS
 .vscode/
