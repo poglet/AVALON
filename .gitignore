@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Environment
+.env
+
+# AVALON runtime working directory (per-project state, evidence, logs)
+.avalon/
+
+# Third-party reference tree (AGPL-3.0) reviewed for ideas only — not part of AVALON.
+# TODO: delete this directory; it must never be committed to the MIT-licensed repo.
+scopeweaver-main/
+
+# Internal planning documents — not part of the distributed project.
+plans/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

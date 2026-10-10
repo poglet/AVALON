@@ -1,0 +1,27 @@
+# AVALON default configuration.
+#
+# This file is copied to `.avalon/config.toml` on first run and can be edited freely.
+# Precedence: CLI flag > environment/.env > this file > built-in default.
+
+# The primary model used for the agent loop (an OpenRouter model slug).
+model = "deepseek/deepseek-v4.1-flash"
+
+# Used only if the primary model returns HTTP 402 (insufficient credits).
+# Leave empty to stop the run so a human can top up credits and resume.
+# May point at a free OpenRouter model, or a future non-OpenRouter model.
+backup_model = ""
+
+# Maximum number of agent steps before the run stops. Use 0 for unlimited.
+max_steps = 40
+
+# Optional wall-clock limit, in minutes. Leave unset for no limit.
+# max_time_minutes = 30
+
+# Default engagement type: black, grey, or white.
+box_type = "white"
+
+# Directory (relative to the project) holding the phase playbooks.
+playbook_dir = "playbooks"
+
+# Default output format: rich, plain, or json.
+output_format = "rich"
