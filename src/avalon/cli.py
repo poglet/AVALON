@@ -8,6 +8,7 @@ later phases.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -142,7 +143,36 @@ def export(
     run_id: Annotated[str | None, typer.Option("--run", help="Export a single run.")] = None,
 ) -> None:
     """Render a project's event log from the database."""
-    _not_implemented("export", "Phase 3")
+    from avalon.project import resolve_project
+    from avalon.store.db import Store
+    from avalon.store.events import export_jsonl, export_markdown
+
+    proj = resolve_project(project)
+    if not proj.db_path.exists():
+        console.print(f"[red]No project database at {proj.db_path}[/red]")
+        raise typer.Exit(code=1)
+
+    store = Store(proj.db_path)
+    store.connect()
+    try:
+        project_row = store.get_project(proj.name)
+        if project_row is None:
+            console.print(f"[red]Project {proj.name!r} not found in the database.[/red]")
+            raise typer.Exit(code=1)
+        selected_run = int(run_id) if run_id else None
+        text = (
+            export_markdown(store, project_row.id, selected_run)
+            if md
+            else export_jsonl(store, project_row.id, selected_run)
+        )
+    finally:
+        store.close()
+
+    if out:
+        Path(out).write_text(text, encoding="utf-8")
+        console.print(f"wrote {out}")
+    else:
+        typer.echo(text)
 
 
 @app.command()
